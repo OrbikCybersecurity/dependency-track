@@ -59,6 +59,8 @@ import org.dependencytrack.notification.vo.NewVulnerableDependency;
 import org.dependencytrack.notification.vo.PolicyViolationIdentified;
 import org.dependencytrack.notification.vo.ProjectFinding;
 import org.dependencytrack.notification.vo.ProjectPolicyViolation;
+import org.dependencytrack.notification.vo.ProjectReanalyzed;
+import org.dependencytrack.notification.vo.ProjectReanalyzedFailed;
 import org.dependencytrack.notification.vo.VexConsumedOrProcessed;
 import org.dependencytrack.notification.vo.ViolationAnalysisDecisionChange;
 import org.dependencytrack.parser.common.resolver.CweResolver;
@@ -613,6 +615,20 @@ public final class NotificationUtil {
         }
         return builder.build();
     }
+
+    public static JsonObject toJson(final ProjectReanalyzed vo) {
+        final JsonObjectBuilder builder = Json.createObjectBuilder()
+                .add("project", toJson(vo.getProject()));
+        return builder.build();
+    }
+
+    public static JsonObject toJson(final ProjectReanalyzedFailed vo) {
+        final JsonObjectBuilder builder = Json.createObjectBuilder()
+                .add("project", toJson(vo.getProject()))
+                .add("cause", vo.getCause());
+        return builder.build();
+    }
+
 
     private static JsonObject violationTypeCountMapToJson(final Map<PolicyViolation.Type, Integer> map) {
         final var builder = Json.createObjectBuilder();
