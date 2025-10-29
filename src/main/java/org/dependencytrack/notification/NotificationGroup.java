@@ -49,6 +49,8 @@ public enum NotificationGroup {
     POLICY_VIOLATION(NotificationTriggerType.EVENT),
     NEW_POLICY_VIOLATIONS_SUMMARY(NotificationTriggerType.SCHEDULE),
     PROJECT_CREATED(NotificationTriggerType.EVENT),
+    PROJECT_REANALYZED(NotificationTriggerType.EVENT),
+    PROJECT_REANALYZED_FAILED(NotificationTriggerType.EVENT),
     USER_CREATED(NotificationTriggerType.EVENT),
     USER_DELETED(NotificationTriggerType.EVENT);
 

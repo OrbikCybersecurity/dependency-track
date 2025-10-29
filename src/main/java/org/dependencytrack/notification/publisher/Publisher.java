@@ -36,6 +36,8 @@ import org.dependencytrack.notification.vo.NewVulnerabilitiesSummary;
 import org.dependencytrack.notification.vo.NewVulnerabilityIdentified;
 import org.dependencytrack.notification.vo.NewVulnerableDependency;
 import org.dependencytrack.notification.vo.PolicyViolationIdentified;
+import org.dependencytrack.notification.vo.ProjectReanalyzed;
+import org.dependencytrack.notification.vo.ProjectReanalyzedFailed;
 import org.dependencytrack.notification.vo.VexConsumedOrProcessed;
 import org.dependencytrack.notification.vo.ViolationAnalysisDecisionChange;
 import org.dependencytrack.persistence.QueryManager;
@@ -141,6 +143,12 @@ public interface Publisher {
                     context.put("subject", subject);
                     // TODO: Can we make subjectJson evaluate lazily? Kinda wasteful to convert the subject
                     //  to JSON "just in case" if it can be a rather large object graph...
+                    context.put("subjectJson", NotificationUtil.toJson(subject));
+                } else if (notification.getSubject() instanceof final ProjectReanalyzed subject) {
+                    context.put("subject", subject);
+                    context.put("subjectJson", NotificationUtil.toJson(subject));
+                } else if (notification.getSubject() instanceof final ProjectReanalyzedFailed subject) {
+                    context.put("subject", subject);
                     context.put("subjectJson", NotificationUtil.toJson(subject));
                 }
             } else if  (NotificationScope.SYSTEM.name().equals(notification.getScope())) {
