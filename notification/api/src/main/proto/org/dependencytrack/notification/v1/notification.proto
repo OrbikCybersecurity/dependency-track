@@ -66,6 +66,12 @@ enum Group {
   // Scheduled summary of new policy violations across projects.
   GROUP_NEW_POLICY_VIOLATIONS_SUMMARY = 24;
 
+  // A project's vulnerability analysis completed successfully.
+  GROUP_PROJECT_REANALYZED = 25;
+
+  // A project's vulnerability analysis failed to complete.
+  GROUP_PROJECT_REANALYZED_FAILED = 26;
+
   // Indexing service has been removed as of
   // https://github.com/DependencyTrack/hyades/issues/661
   reserved 5;
@@ -268,6 +274,17 @@ enum AnalysisTrigger {
 
   // The analysis was triggered manually.
   ANALYSIS_TRIGGER_MANUAL = 3;
+}
+
+// Subject for GROUP_PROJECT_REANALYZED notifications.
+message ProjectReanalyzedSubject {
+  Project project = 1;
+}
+
+// Subject for GROUP_PROJECT_REANALYZED_FAILED notifications.
+message ProjectReanalyzedFailedSubject {
+  Project project = 1;
+  optional string cause = 2;
 }
 
 message VulnerabilityRetractedSubject {

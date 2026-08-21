@@ -41,6 +41,7 @@ import org.dependencytrack.dex.engine.api.TaskType;
 import org.dependencytrack.dex.engine.api.TaskWorkerOptions;
 import org.dependencytrack.dex.engine.api.request.CreateTaskQueueRequest;
 import org.dependencytrack.dex.listener.DelayedBomProcessedNotificationEmitter;
+import org.dependencytrack.dex.listener.ProjectReanalyzedNotificationEmitter;
 import org.dependencytrack.filestorage.api.FileStorage;
 import org.dependencytrack.metrics.FetchProjectMetricsUpdateCandidatesActivity;
 import org.dependencytrack.metrics.RefreshGlobalPortfolioMetricsActivity;
@@ -371,6 +372,8 @@ public final class DexEngineInitializer implements ServletContextListener {
                 .orElse(false)) {
             engine.addEventListener(new DelayedBomProcessedNotificationEmitter());
         }
+        // ORBIK: PROJECT_REANALYZED / PROJECT_REANALYZED_FAILED notification parity with the 4.x fork.
+        engine.addEventListener(new ProjectReanalyzedNotificationEmitter());
 
         LOGGER.info("Starting durable execution engine");
         healthCheckRegistry.addCheck(new DexEngineHealthCheck(engine));

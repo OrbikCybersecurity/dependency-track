@@ -37,6 +37,8 @@ import org.dependencytrack.notification.proto.v1.Notification;
 import org.dependencytrack.notification.proto.v1.PolicyViolationAnalysisDecisionChangeSubject;
 import org.dependencytrack.notification.proto.v1.PolicyViolationSubject;
 import org.dependencytrack.notification.proto.v1.Project;
+import org.dependencytrack.notification.proto.v1.ProjectReanalyzedFailedSubject;
+import org.dependencytrack.notification.proto.v1.ProjectReanalyzedSubject;
 import org.dependencytrack.notification.proto.v1.UserSubject;
 import org.dependencytrack.notification.proto.v1.VexConsumedOrProcessedSubject;
 import org.dependencytrack.notification.proto.v1.VulnerabilityAnalysisDecisionChangeSubject;
@@ -182,6 +184,16 @@ final class KafkaNotificationPublisher implements NotificationPublisher {
                 requireSubjectOfTypeAnyOf(notification, List.of(UserSubject.class));
                 final var subject = notification.getSubject().unpack(UserSubject.class);
                 yield subject.getUsername();
+            }
+            case GROUP_PROJECT_REANALYZED -> {
+                requireSubjectOfTypeAnyOf(notification, List.of(ProjectReanalyzedSubject.class));
+                final var subject = notification.getSubject().unpack(ProjectReanalyzedSubject.class);
+                yield subject.getProject().getUuid();
+            }
+            case GROUP_PROJECT_REANALYZED_FAILED -> {
+                requireSubjectOfTypeAnyOf(notification, List.of(ProjectReanalyzedFailedSubject.class));
+                final var subject = notification.getSubject().unpack(ProjectReanalyzedFailedSubject.class);
+                yield subject.getProject().getUuid();
             }
             case GROUP_ANALYZER, GROUP_CONFIGURATION, GROUP_DATASOURCE_MIRRORING,
                  GROUP_FILE_SYSTEM, GROUP_INTEGRATION, GROUP_REPOSITORY,

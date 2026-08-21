@@ -73,6 +73,8 @@ public final class NotificationModelConverter {
             case VEX_PROCESSED -> Group.GROUP_VEX_PROCESSED;
             case NEW_VULNERABILITIES_SUMMARY -> Group.GROUP_NEW_VULNERABILITIES_SUMMARY;
             case NEW_POLICY_VIOLATIONS_SUMMARY -> Group.GROUP_NEW_POLICY_VIOLATIONS_SUMMARY;
+            case PROJECT_REANALYZED -> Group.GROUP_PROJECT_REANALYZED;
+            case PROJECT_REANALYZED_FAILED -> Group.GROUP_PROJECT_REANALYZED_FAILED;
         };
     }
 
@@ -100,6 +102,8 @@ public final class NotificationModelConverter {
             case GROUP_VEX_PROCESSED -> NotificationGroup.VEX_PROCESSED;
             case GROUP_NEW_VULNERABILITIES_SUMMARY -> NotificationGroup.NEW_VULNERABILITIES_SUMMARY;
             case GROUP_NEW_POLICY_VIOLATIONS_SUMMARY -> NotificationGroup.NEW_POLICY_VIOLATIONS_SUMMARY;
+            case GROUP_PROJECT_REANALYZED -> NotificationGroup.PROJECT_REANALYZED;
+            case GROUP_PROJECT_REANALYZED_FAILED -> NotificationGroup.PROJECT_REANALYZED_FAILED;
             case GROUP_UNSPECIFIED, UNRECOGNIZED -> throw new IllegalArgumentException("Unknown group: " + protoGroup);
         };
     }
