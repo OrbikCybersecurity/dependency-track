@@ -53,6 +53,8 @@ import static org.dependencytrack.notification.api.NotificationFactory.createNew
 import static org.dependencytrack.notification.api.NotificationFactory.createPolicyViolationAnalysisDecisionChangeNotification;
 import static org.dependencytrack.notification.api.NotificationFactory.createPolicyViolationNotification;
 import static org.dependencytrack.notification.api.NotificationFactory.createProjectCreatedNotification;
+import static org.dependencytrack.notification.api.NotificationFactory.createProjectReanalyzedFailedNotification;
+import static org.dependencytrack.notification.api.NotificationFactory.createProjectReanalyzedNotification;
 import static org.dependencytrack.notification.api.NotificationFactory.createUserCreatedNotification;
 import static org.dependencytrack.notification.api.NotificationFactory.createUserDeletedNotification;
 import static org.dependencytrack.notification.api.NotificationFactory.createVexConsumedNotification;
@@ -73,6 +75,8 @@ import static org.dependencytrack.notification.proto.v1.Group.GROUP_NEW_VULNERAB
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_POLICY_VIOLATION;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_PROJECT_AUDIT_CHANGE;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_PROJECT_CREATED;
+import static org.dependencytrack.notification.proto.v1.Group.GROUP_PROJECT_REANALYZED;
+import static org.dependencytrack.notification.proto.v1.Group.GROUP_PROJECT_REANALYZED_FAILED;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_USER_CREATED;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_USER_DELETED;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_VEX_CONSUMED;
@@ -153,7 +157,13 @@ public final class TestNotificationFactory {
                     TestNotificationFactory::createNewVulnerabilitiesSummaryTestNotification),
             Map.entry(
                     new SupplierMatrixKey(SCOPE_PORTFOLIO, GROUP_NEW_POLICY_VIOLATIONS_SUMMARY, LEVEL_INFORMATIONAL),
-                    TestNotificationFactory::createNewPolicyViolationsSummaryTestNotification));
+                    TestNotificationFactory::createNewPolicyViolationsSummaryTestNotification),
+            Map.entry(
+                    new SupplierMatrixKey(SCOPE_PORTFOLIO, GROUP_PROJECT_REANALYZED, LEVEL_INFORMATIONAL),
+                    TestNotificationFactory::createProjectReanalyzedTestNotification),
+            Map.entry(
+                    new SupplierMatrixKey(SCOPE_PORTFOLIO, GROUP_PROJECT_REANALYZED_FAILED, LEVEL_INFORMATIONAL),
+                    TestNotificationFactory::createProjectReanalyzedFailedTestNotification));
 
     private TestNotificationFactory() {}
 
@@ -235,6 +245,14 @@ public final class TestNotificationFactory {
 
     public static Notification createProjectCreatedTestNotification() {
         return createProjectCreatedNotification(createProject());
+    }
+
+    public static Notification createProjectReanalyzedTestNotification() {
+        return createProjectReanalyzedNotification(createProject());
+    }
+
+    public static Notification createProjectReanalyzedFailedTestNotification() {
+        return createProjectReanalyzedFailedNotification(createProject(), "cause");
     }
 
     public static Notification createUserCreatedTestNotification() {

@@ -45,6 +45,8 @@ public enum NotificationGroup {
     PROJECT_CREATED,
     USER_CREATED,
     USER_DELETED,
+    PROJECT_REANALYZED,
+    PROJECT_REANALYZED_FAILED,
 
     // Scheduled Groups
     NEW_VULNERABILITIES_SUMMARY(NotificationTriggerType.SCHEDULE),

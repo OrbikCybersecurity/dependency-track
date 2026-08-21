@@ -42,6 +42,8 @@ import org.dependencytrack.notification.proto.v1.PolicyViolationAnalysis;
 import org.dependencytrack.notification.proto.v1.PolicyViolationAnalysisDecisionChangeSubject;
 import org.dependencytrack.notification.proto.v1.PolicyViolationSubject;
 import org.dependencytrack.notification.proto.v1.Project;
+import org.dependencytrack.notification.proto.v1.ProjectReanalyzedFailedSubject;
+import org.dependencytrack.notification.proto.v1.ProjectReanalyzedSubject;
 import org.dependencytrack.notification.proto.v1.Scope;
 import org.dependencytrack.notification.proto.v1.UserSubject;
 import org.dependencytrack.notification.proto.v1.VexConsumedOrProcessedSubject;
@@ -67,6 +69,8 @@ import static org.dependencytrack.notification.proto.v1.Group.GROUP_NEW_VULNERAB
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_POLICY_VIOLATION;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_PROJECT_AUDIT_CHANGE;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_PROJECT_CREATED;
+import static org.dependencytrack.notification.proto.v1.Group.GROUP_PROJECT_REANALYZED;
+import static org.dependencytrack.notification.proto.v1.Group.GROUP_PROJECT_REANALYZED_FAILED;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_UNSPECIFIED;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_USER_CREATED;
 import static org.dependencytrack.notification.proto.v1.Group.GROUP_USER_DELETED;
@@ -379,6 +383,34 @@ public final class NotificationFactory {
                 .setTitle("Project Added")
                 .setContent(project.getName() + " was created")
                 .setSubject(Any.pack(project))
+                .build();
+    }
+
+    public static Notification createProjectReanalyzedNotification(Project project) {
+        requireNonNull(project, "project must not be null");
+
+        return newNotificationBuilder(SCOPE_PORTFOLIO, GROUP_PROJECT_REANALYZED, LEVEL_INFORMATIONAL)
+                .setTitle("Project Reanalyzed")
+                .setContent("The " + project.getName() + " project was reanalyzed")
+                .setSubject(Any.pack(
+                        ProjectReanalyzedSubject.newBuilder()
+                                .setProject(project)
+                                .build()))
+                .build();
+    }
+
+    public static Notification createProjectReanalyzedFailedNotification(Project project, String cause) {
+        requireNonNull(project, "project must not be null");
+        requireNonNull(cause, "cause must not be null");
+
+        return newNotificationBuilder(SCOPE_PORTFOLIO, GROUP_PROJECT_REANALYZED_FAILED, LEVEL_INFORMATIONAL)
+                .setTitle("Project Reanalysis Failed")
+                .setContent("An error occurred while reanalyzing the project " + project.getName())
+                .setSubject(Any.pack(
+                        ProjectReanalyzedFailedSubject.newBuilder()
+                                .setProject(project)
+                                .setCause(cause)
+                                .build()))
                 .build();
     }
 

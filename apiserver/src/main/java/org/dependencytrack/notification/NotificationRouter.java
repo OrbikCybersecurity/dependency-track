@@ -33,6 +33,8 @@ import org.dependencytrack.notification.proto.v1.Notification;
 import org.dependencytrack.notification.proto.v1.PolicyViolationAnalysisDecisionChangeSubject;
 import org.dependencytrack.notification.proto.v1.PolicyViolationSubject;
 import org.dependencytrack.notification.proto.v1.Project;
+import org.dependencytrack.notification.proto.v1.ProjectReanalyzedFailedSubject;
+import org.dependencytrack.notification.proto.v1.ProjectReanalyzedSubject;
 import org.dependencytrack.notification.proto.v1.UserSubject;
 import org.dependencytrack.notification.proto.v1.VexConsumedOrProcessedSubject;
 import org.dependencytrack.notification.proto.v1.VulnerabilityAnalysisDecisionChangeSubject;
@@ -359,6 +361,8 @@ final class NotificationRouter {
             case VulnerabilityAnalysisDecisionChangeSubject it -> it.getProject();
             case Project it -> it;
             case VexConsumedOrProcessedSubject it -> it.getProject();
+            case ProjectReanalyzedSubject it -> it.getProject();
+            case ProjectReanalyzedFailedSubject it -> it.getProject();
             case null, default -> null;
         };
     }
@@ -396,6 +400,10 @@ final class NotificationRouter {
                     notification.getSubject().unpack(VexConsumedOrProcessedSubject.class);
                 case GROUP_USER_CREATED, GROUP_USER_DELETED ->
                     notification.getSubject().unpack(UserSubject.class);
+                case GROUP_PROJECT_REANALYZED ->
+                    notification.getSubject().unpack(ProjectReanalyzedSubject.class);
+                case GROUP_PROJECT_REANALYZED_FAILED ->
+                    notification.getSubject().unpack(ProjectReanalyzedFailedSubject.class);
                 default -> null;
             };
         } catch (IOException e) {
