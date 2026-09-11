@@ -58,20 +58,21 @@ class ProjectReanalyzedNotificationEmitterTest extends PersistenceCapableTest {
         project.setName("acme-app");
         qm.persist(project);
 
-        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(
-                createRunMetadata(
-                        "vuln-analysis",
-                        WorkflowRunStatus.COMPLETED,
-                        Map.of(WF_LABEL_PROJECT_UUID, project.getUuid().toString())))));
+        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(createRunMetadata(
+                "vuln-analysis",
+                WorkflowRunStatus.COMPLETED,
+                Map.of(WF_LABEL_PROJECT_UUID, project.getUuid().toString())))));
 
         assertThat(qm.getNotificationOutbox()).satisfiesExactly(notification -> {
             assertThat(notification.getScope()).isEqualTo(SCOPE_PORTFOLIO);
             assertThat(notification.getGroup()).isEqualTo(GROUP_PROJECT_REANALYZED);
             assertThat(notification.getLevel()).isEqualTo(LEVEL_INFORMATIONAL);
             assertThat(notification.hasSubject()).isTrue();
-            assertThat(notification.getSubject().is(ProjectReanalyzedSubject.class)).isTrue();
+            assertThat(notification.getSubject().is(ProjectReanalyzedSubject.class))
+                    .isTrue();
             final var subject = notification.getSubject().unpack(ProjectReanalyzedSubject.class);
-            assertThat(subject.getProject().getUuid()).isEqualTo(project.getUuid().toString());
+            assertThat(subject.getProject().getUuid())
+                    .isEqualTo(project.getUuid().toString());
         });
     }
 
@@ -81,19 +82,20 @@ class ProjectReanalyzedNotificationEmitterTest extends PersistenceCapableTest {
         project.setName("acme-app");
         qm.persist(project);
 
-        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(
-                createRunMetadata(
-                        "vuln-analysis",
-                        WorkflowRunStatus.FAILED,
-                        Map.of(WF_LABEL_PROJECT_UUID, project.getUuid().toString())))));
+        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(createRunMetadata(
+                "vuln-analysis",
+                WorkflowRunStatus.FAILED,
+                Map.of(WF_LABEL_PROJECT_UUID, project.getUuid().toString())))));
 
         assertThat(qm.getNotificationOutbox()).satisfiesExactly(notification -> {
             assertThat(notification.getScope()).isEqualTo(SCOPE_PORTFOLIO);
             assertThat(notification.getGroup()).isEqualTo(GROUP_PROJECT_REANALYZED_FAILED);
             assertThat(notification.hasSubject()).isTrue();
-            assertThat(notification.getSubject().is(ProjectReanalyzedFailedSubject.class)).isTrue();
+            assertThat(notification.getSubject().is(ProjectReanalyzedFailedSubject.class))
+                    .isTrue();
             final var subject = notification.getSubject().unpack(ProjectReanalyzedFailedSubject.class);
-            assertThat(subject.getProject().getUuid()).isEqualTo(project.getUuid().toString());
+            assertThat(subject.getProject().getUuid())
+                    .isEqualTo(project.getUuid().toString());
             assertThat(subject.getCause()).isEqualTo("Vulnerability analysis workflow ended with status FAILED");
         });
     }
@@ -118,9 +120,10 @@ class ProjectReanalyzedNotificationEmitterTest extends PersistenceCapableTest {
                         WorkflowRunStatus.FAILED,
                         Map.of(WF_LABEL_PROJECT_UUID, projectB.getUuid().toString())))));
 
-        assertThat(qm.getNotificationOutbox()).satisfiesExactlyInAnyOrder(
-                notification -> assertThat(notification.getGroup()).isEqualTo(GROUP_PROJECT_REANALYZED),
-                notification -> assertThat(notification.getGroup()).isEqualTo(GROUP_PROJECT_REANALYZED_FAILED));
+        assertThat(qm.getNotificationOutbox())
+                .satisfiesExactlyInAnyOrder(
+                        notification -> assertThat(notification.getGroup()).isEqualTo(GROUP_PROJECT_REANALYZED),
+                        notification -> assertThat(notification.getGroup()).isEqualTo(GROUP_PROJECT_REANALYZED_FAILED));
     }
 
     @Test
@@ -129,44 +132,36 @@ class ProjectReanalyzedNotificationEmitterTest extends PersistenceCapableTest {
         project.setName("acme-app");
         qm.persist(project);
 
-        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(
-                createRunMetadata(
-                        "repo-meta-analysis",
-                        WorkflowRunStatus.COMPLETED,
-                        Map.of(WF_LABEL_PROJECT_UUID, project.getUuid().toString())))));
+        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(createRunMetadata(
+                "repo-meta-analysis",
+                WorkflowRunStatus.COMPLETED,
+                Map.of(WF_LABEL_PROJECT_UUID, project.getUuid().toString())))));
 
         assertThat(qm.getNotificationOutbox()).isEmpty();
     }
 
     @Test
     void shouldIgnoreRunsWithNoLabels() {
-        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(
-                createRunMetadata(
-                        "vuln-analysis",
-                        WorkflowRunStatus.COMPLETED,
-                        null))));
+        emitter.onEvent(new WorkflowRunsCompletedEvent(
+                List.of(createRunMetadata("vuln-analysis", WorkflowRunStatus.COMPLETED, null))));
 
         assertThat(qm.getNotificationOutbox()).isEmpty();
     }
 
     @Test
     void shouldIgnoreRunsWithMissingProjectUuid() {
-        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(
-                createRunMetadata(
-                        "vuln-analysis",
-                        WorkflowRunStatus.COMPLETED,
-                        Map.of()))));
+        emitter.onEvent(new WorkflowRunsCompletedEvent(
+                List.of(createRunMetadata("vuln-analysis", WorkflowRunStatus.COMPLETED, Map.of()))));
 
         assertThat(qm.getNotificationOutbox()).isEmpty();
     }
 
     @Test
     void shouldSkipRunsForNonExistentProject() {
-        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(
-                createRunMetadata(
-                        "vuln-analysis",
-                        WorkflowRunStatus.COMPLETED,
-                        Map.of(WF_LABEL_PROJECT_UUID, UUID.randomUUID().toString())))));
+        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(createRunMetadata(
+                "vuln-analysis",
+                WorkflowRunStatus.COMPLETED,
+                Map.of(WF_LABEL_PROJECT_UUID, UUID.randomUUID().toString())))));
 
         assertThat(qm.getNotificationOutbox()).isEmpty();
     }
@@ -184,20 +179,18 @@ class ProjectReanalyzedNotificationEmitterTest extends PersistenceCapableTest {
         project.setName("acme-app");
         qm.persist(project);
 
-        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(
-                createRunMetadata(
-                        "vuln-analysis",
-                        WorkflowRunStatus.CANCELLED,
-                        Map.of(WF_LABEL_PROJECT_UUID, project.getUuid().toString())))));
+        emitter.onEvent(new WorkflowRunsCompletedEvent(List.of(createRunMetadata(
+                "vuln-analysis",
+                WorkflowRunStatus.CANCELLED,
+                Map.of(WF_LABEL_PROJECT_UUID, project.getUuid().toString())))));
 
-        assertThat(qm.getNotificationOutbox()).satisfiesExactly(notification ->
-                assertThat(notification.getGroup()).isEqualTo(GROUP_PROJECT_REANALYZED_FAILED));
+        assertThat(qm.getNotificationOutbox())
+                .satisfiesExactly(
+                        notification -> assertThat(notification.getGroup()).isEqualTo(GROUP_PROJECT_REANALYZED_FAILED));
     }
 
     private static WorkflowRunMetadata createRunMetadata(
-            String workflowName,
-            WorkflowRunStatus status,
-            Map<String, String> labels) {
+            String workflowName, WorkflowRunStatus status, Map<String, String> labels) {
         return new WorkflowRunMetadata(
                 UUID.randomUUID(),
                 null,
@@ -215,5 +208,4 @@ class ProjectReanalyzedNotificationEmitterTest extends PersistenceCapableTest {
                 null,
                 null);
     }
-
 }

@@ -76,8 +76,7 @@ public final class ProjectReanalyzedNotificationEmitter implements WorkflowRunsC
                 continue;
             }
 
-            final UUID projectUuid = Optional
-                    .ofNullable(labels.get(WF_LABEL_PROJECT_UUID))
+            final UUID projectUuid = Optional.ofNullable(labels.get(WF_LABEL_PROJECT_UUID))
                     .map(UUID::fromString)
                     .orElse(null);
             if (projectUuid != null) {
@@ -89,18 +88,12 @@ public final class ProjectReanalyzedNotificationEmitter implements WorkflowRunsC
             return;
         }
 
-        final Set<UUID> projectUuids = relevantRuns.stream()
-                .map(RelevantRun::projectUuid)
-                .collect(Collectors.toSet());
+        final Set<UUID> projectUuids =
+                relevantRuns.stream().map(RelevantRun::projectUuid).collect(Collectors.toSet());
 
-        final Map<UUID, Project> projectByUuid = withJdbiHandle(
-                handle -> handle
-                        .attach(NotificationSubjectDao.class)
-                        .getProjects(projectUuids)
-                        .stream()
-                        .collect(Collectors.toMap(
-                                project -> UUID.fromString(project.getUuid()),
-                                Function.identity())));
+        final Map<UUID, Project> projectByUuid =
+                withJdbiHandle(handle -> handle.attach(NotificationSubjectDao.class).getProjects(projectUuids).stream()
+                        .collect(Collectors.toMap(project -> UUID.fromString(project.getUuid()), Function.identity())));
 
         final var notifications = new ArrayList<Notification>(relevantRuns.size());
         for (final RelevantRun run : relevantRuns) {
@@ -113,8 +106,7 @@ public final class ProjectReanalyzedNotificationEmitter implements WorkflowRunsC
                 notifications.add(createProjectReanalyzedNotification(project));
             } else {
                 notifications.add(createProjectReanalyzedFailedNotification(
-                        project,
-                        "Vulnerability analysis workflow ended with status " + run.status()));
+                        project, "Vulnerability analysis workflow ended with status " + run.status()));
             }
         }
 
@@ -122,9 +114,5 @@ public final class ProjectReanalyzedNotificationEmitter implements WorkflowRunsC
         useJdbiTransaction(handle -> new JdbiNotificationEmitter(handle).emitAll(notifications));
     }
 
-    private record RelevantRun(
-            UUID projectUuid,
-            WorkflowRunStatus status) {
-    }
-
+    private record RelevantRun(UUID projectUuid, WorkflowRunStatus status) {}
 }

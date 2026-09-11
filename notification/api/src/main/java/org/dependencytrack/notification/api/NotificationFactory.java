@@ -392,10 +392,9 @@ public final class NotificationFactory {
         return newNotificationBuilder(SCOPE_PORTFOLIO, GROUP_PROJECT_REANALYZED, LEVEL_INFORMATIONAL)
                 .setTitle("Project Reanalyzed")
                 .setContent("The " + project.getName() + " project was reanalyzed")
-                .setSubject(Any.pack(
-                        ProjectReanalyzedSubject.newBuilder()
-                                .setProject(project)
-                                .build()))
+                .setSubject(Any.pack(ProjectReanalyzedSubject.newBuilder()
+                        .setProject(project)
+                        .build()))
                 .build();
     }
 
@@ -406,11 +405,10 @@ public final class NotificationFactory {
         return newNotificationBuilder(SCOPE_PORTFOLIO, GROUP_PROJECT_REANALYZED_FAILED, LEVEL_INFORMATIONAL)
                 .setTitle("Project Reanalysis Failed")
                 .setContent("An error occurred while reanalyzing the project " + project.getName())
-                .setSubject(Any.pack(
-                        ProjectReanalyzedFailedSubject.newBuilder()
-                                .setProject(project)
-                                .setCause(cause)
-                                .build()))
+                .setSubject(Any.pack(ProjectReanalyzedFailedSubject.newBuilder()
+                        .setProject(project)
+                        .setCause(cause)
+                        .build()))
                 .build();
     }
 

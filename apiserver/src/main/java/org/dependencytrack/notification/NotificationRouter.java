@@ -400,8 +400,7 @@ final class NotificationRouter {
                     notification.getSubject().unpack(VexConsumedOrProcessedSubject.class);
                 case GROUP_USER_CREATED, GROUP_USER_DELETED ->
                     notification.getSubject().unpack(UserSubject.class);
-                case GROUP_PROJECT_REANALYZED ->
-                    notification.getSubject().unpack(ProjectReanalyzedSubject.class);
+                case GROUP_PROJECT_REANALYZED -> notification.getSubject().unpack(ProjectReanalyzedSubject.class);
                 case GROUP_PROJECT_REANALYZED_FAILED ->
                     notification.getSubject().unpack(ProjectReanalyzedFailedSubject.class);
                 default -> null;
