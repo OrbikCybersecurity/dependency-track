@@ -19,6 +19,7 @@
 package org.dependencytrack.notification.templating.pebble;
 
 import com.google.protobuf.util.Timestamps;
+import org.dependencytrack.notification.api.TestNotificationFactory;
 import org.dependencytrack.notification.api.templating.NotificationTemplate;
 import org.dependencytrack.notification.api.templating.NotificationTemplateRenderer;
 import org.dependencytrack.notification.api.templating.RenderedNotificationTemplate;
@@ -84,6 +85,35 @@ class PebbleNotificationTemplateRendererTest {
         final RenderedNotificationTemplate rendered = render("", "%1$s=[{{ %1$s }}]".formatted(BASE_URL), Map.of());
 
         assertThat(rendered.content()).isEqualTo("%s=[]".formatted(BASE_URL));
+    }
+
+    // ORBIK: the webhook template renders "subject": null for any subject type extractSubject does
+    // not know, and the portal then drops PROJECT_REANALYZED(_FAILED) because it cannot tell which
+    // project finished its analysis (MYORBIK07-3032).
+    @ParameterizedTest
+    @MethodSource("projectReanalyzedNotifications")
+    void shouldRenderProjectReanalyzedSubjectAsJson(Notification notification, String expectedCause) {
+        final NotificationTemplateRenderer renderer = new PebbleNotificationTemplateRendererFactory(Map.of())
+                .createRenderer(new NotificationTemplate(
+                        "{% if subjectJson is defined %}{{ subjectJson | raw }}{% else %}null{% endif %}",
+                        "application/json"));
+
+        final RenderedNotificationTemplate rendered = renderer.render(notification, Map.of());
+
+        assertThat(rendered).isNotNull();
+        assertThat(rendered.content())
+                .contains("\"uuid\": \"c9c9539a-e381-4b36-ac52-6a7ab83b2c95\"")
+                .contains("\"name\": \"projectName\"")
+                .contains("\"version\": \"projectVersion\"");
+        if (expectedCause != null) {
+            assertThat(rendered.content()).contains("\"cause\": \"%s\"".formatted(expectedCause));
+        }
+    }
+
+    private static Stream<Arguments> projectReanalyzedNotifications() {
+        return Stream.of(
+                arguments(TestNotificationFactory.createProjectReanalyzedTestNotification(), null),
+                arguments(TestNotificationFactory.createProjectReanalyzedFailedTestNotification(), "cause"));
     }
 
     private static RenderedNotificationTemplate render(

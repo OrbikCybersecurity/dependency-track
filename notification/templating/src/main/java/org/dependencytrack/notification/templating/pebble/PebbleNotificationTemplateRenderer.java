@@ -38,6 +38,8 @@ import org.dependencytrack.notification.proto.v1.NewVulnerableDependencySubject;
 import org.dependencytrack.notification.proto.v1.Notification;
 import org.dependencytrack.notification.proto.v1.PolicyViolationAnalysisDecisionChangeSubject;
 import org.dependencytrack.notification.proto.v1.PolicyViolationSubject;
+import org.dependencytrack.notification.proto.v1.ProjectReanalyzedFailedSubject;
+import org.dependencytrack.notification.proto.v1.ProjectReanalyzedSubject;
 import org.dependencytrack.notification.proto.v1.UserSubject;
 import org.dependencytrack.notification.proto.v1.VexConsumedOrProcessedSubject;
 import org.dependencytrack.notification.proto.v1.VulnerabilityAnalysisDecisionChangeSubject;
@@ -194,6 +196,11 @@ final class PebbleNotificationTemplateRenderer implements NotificationTemplateRe
             return subject.unpack(NewVulnerabilitiesSummarySubject.class);
         } else if (subject.is(NewPolicyViolationsSummarySubject.class)) {
             return subject.unpack(NewPolicyViolationsSummarySubject.class);
+        } else if (subject.is(ProjectReanalyzedSubject.class)) {
+            // ORBIK: without these two, the webhook renders "subject": null for our groups.
+            return subject.unpack(ProjectReanalyzedSubject.class);
+        } else if (subject.is(ProjectReanalyzedFailedSubject.class)) {
+            return subject.unpack(ProjectReanalyzedFailedSubject.class);
         }
 
         return null;
